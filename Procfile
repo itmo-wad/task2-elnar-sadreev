@@ -1,1 +1,1 @@
-web: gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 --worker-connections 1000 app:app
+web: gunicorn --worker-class eventlet -w 1 --worker-connections 1000 app:app

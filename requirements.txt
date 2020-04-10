@@ -2,3 +2,4 @@ Flask-SocketIO
 gunicorn
 gevent
 gevent-websocket
+eventlet
