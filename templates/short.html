@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html class="h-100" lang="en">
+<head>
+	<title>Short polling</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://code.jquery.com/jquery-3.4.1.js"
+			integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+			crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<style>
+		.messages {
+			height: 50%;
+			width: 30%;
+		}
+		.msg {
+			overflow-wrap: break-word;
+		}
+		.h-85 {
+			height: 85%!important;
+		}
+	</style>
+</head>
+<body class="h-85 pt-3">
+	<div style="display: flex; flex-flow: column;" class="h-100 container">
+		<h2>Short polling chat</h2>
+		<div class="border" style="flex-grow: 1; display: flex; flex-flow: column; overflow: auto;" id="chat">
+			<div style="flex-grow: 1" class="msg container overflow-auto" id="messages">
+
+			</div>
+		</div>
+		<div id="new" class="input-group my-3">
+ 			 <input id="newmsg" type="text" class="form-control" placeholder="New message...">
+  			<div class="input-group-append">
+    		<input id="send" class="btn btn-outline-secondary" type="button" value="Send">
+  			</div>
+			</div>
+		<a class="btn btn-light" href="/">Back</a>
+	</div>
+</body>
+<script type="text/javascript">
+	function sendmsg () {
+		var content = $("#newmsg").val();
+		if (content == '')
+			return;
+		$('#newmsg').val("");
+		$.ajax({
+			method: "POST",
+        	url: "/newmessage",
+        	data: {"content": content},
+		});
+	}
+	$('#send').click(sendmsg);
+	$('#newmsg').keydown(function (e) {
+		if (e.key == 'Enter')
+			sendmsg();
+	});
+
+	function getUpdates () {
+		$.ajax({
+			method: "GET",
+			url: "/spoll",
+			}).done(function (msg) {
+				$('#messages').html("")
+				if (msg.length != 0)
+					for (var i=0; i<msg.length; i++) {
+						$('#messages').append("<div><b>"+msg[i]['author']+" ("+msg[i]['time']+"):</b> "+msg[i]['msg']+"</div>");
+					}
+				chatbox = document.getElementById('chat');
+				chatbox.scrollTo(0,chatbox.scrollHeight);
+			});
+	}
+	
+	getUpdates();
+	setInterval(getUpdates, 1000);
+	
+</script>
+</html>

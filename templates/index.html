@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Chat bot</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://code.jquery.com/jquery-3.4.1.js"
+			integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+			crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+	<div class="container mt-3">
+	<h2>Hello there!</h2>
+	<p>Choose your option:</p>
+	<div class="btn-group-vertical">
+	<a class="btn btn-light mb-1" href="/short">Short polling</a>
+	<a class="btn btn-light mb-1" href="/long">Long polling</a>
+	<a class="btn btn-light" href="/websock">Websocket</a>
+	</div>
+	<br>
+	<div class="btn-group mt-2">
+		<input id="clhst" type="button" class="btn btn-light" value="Clear history!">
+	</div>
+	<div id="hsuccess" class="btn mt-2 alert-success invisible">History cleared!</div>
+	</div>
+</body>
+<script type="text/javascript">
+	$('#clhst').click(function () {
+		$.ajax({
+			method: "GET",
+			url: "/clear",
+			}).done(function (msg) {
+				if (msg['status']=="OK")
+					$('#hsuccess').removeClass("invisible")
+					.addClass("visible");
+					$(this).delay(1500).queue(function () {
+						$('#hsuccess').removeClass("visible")
+						.addClass("invisible");
+						$(this).dequeue();
+					});
+			});
+	});
+</script>
+</html>
